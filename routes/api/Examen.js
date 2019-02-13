@@ -48,7 +48,34 @@ router.post('/new',function(req,res,next){
 });
 
 
-
+router.put('/done/:ExamenId', function(req, res, next){
+    var _ExamenId = req.params.thingId;
+    var _ExamenUpds = req.body;
+    var _ExamenUpdated = null;
+    var newData = data.map(
+      function(doc, i){
+        if (doc._id == _ExamenId){
+          _ExamenUpdated = Object.assign(
+            {},
+            doc,
+            {"done":true},
+            _ExamenUpds
+            );
+          return _ExamenUpdated;
+        }
+        return doc;
+      }
+    );
+    data = newData;
+    fileModel.write(data, function (err) {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ 'Error': 'Error al Guardar Data' });
+      }
+      return res.status(200).json(_ExamenUpdated);
+    });
+  });
+  
 fileModel.read(function(err , filedata){
   if(err){
     console.log(err);
